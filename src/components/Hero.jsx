@@ -1,195 +1,473 @@
 import React, { Suspense, useEffect, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { useGLTF } from '@react-three/drei';
+import { useGLTF, OrbitControls, Center, Environment, ContactShadows, Float } from '@react-three/drei';
 import gsap from 'gsap';
-import * as THREE from 'three';
 
-function Model(props) {
-  const gltf = useGLTF('/gpu2.glb');
+function Model({ scale }) {
+  const { scene } = useGLTF('/RTX3080Ti.glb'); 
   const groupRef = useRef();
   
-  useEffect(() => {
-    if (gltf.scene) {
-      // Clone the scene
-      const clonedScene = gltf.scene.clone(true);
-      
-      // Optimize materials
-      clonedScene.traverse((child) => {
-        if (child.isMesh) {
-          child.castShadow = true;
-          child.receiveShadow = true;
-          
-          if (child.material) {
-            const materials = Array.isArray(child.material) ? child.material : [child.material];
-            materials.forEach((mat) => {
-              mat.needsUpdate = true;
-            });
-          }
-        }
-      });
-      
-      // Clear previous children
-      if (groupRef.current) {
-        while (groupRef.current.children.length > 0) {
-          groupRef.current.remove(groupRef.current.children[0]);
-        }
-        groupRef.current.add(clonedScene);
-      }
-    }
-  }, [gltf]);
-  
-  // Rotation animation
   useFrame((state, delta) => {
     if (groupRef.current) {
-      groupRef.current.rotation.y += delta * 0.3;
+      groupRef.current.rotation.y += delta * 0.12;
     }
   });
-  
-  return <group ref={groupRef} {...props} />;
-}
 
-function Loader() {
-  const meshRef = useRef();
-  
-  useFrame((state, delta) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.x += delta;
-      meshRef.current.rotation.y += delta;
-    }
-  });
-  
   return (
-    <mesh ref={meshRef}>
-      <boxGeometry args={[2, 1, 0.5]} />
-      <meshStandardMaterial color="#00ff00" wireframe />
-    </mesh>
+    <group ref={groupRef} dispose={null}>
+      <primitive object={scene} scale={scale} />
+    </group>
   );
 }
 
 const Hero = () => {
-  const leftDivRef = useRef(null);
-  const rightDivRef = useRef(null);
   const canvasRef = useRef(null);
   const textRef = useRef(null);
 
   useEffect(() => {
     const tl = gsap.timeline();
     
-    gsap.set(leftDivRef.current, { xPercent: 0 });
-    gsap.set(rightDivRef.current, { xPercent: 0 });
-    gsap.set(canvasRef.current, { opacity: 0, scale: 0.8 });
-    gsap.set(textRef.current, { opacity: 0, y: -50 });
+    gsap.set(canvasRef.current, { opacity: 0, y: 50 });
+    gsap.set(textRef.current, { opacity: 0, y: -30 });
 
-    tl.to([leftDivRef.current, rightDivRef.current], {
-      xPercent: (index) => index === 0 ? -100 : 100,
-      duration: 1.5,
-      ease: 'power4.inOut',
-      stagger: 0.1
+    tl.to(textRef.current, {
+      opacity: 1,
+      y: 0,
+      duration: 1.2,
+      ease: 'power3.out',
+      delay: 0.3
     })
     .to(canvasRef.current, {
       opacity: 1,
-      scale: 1,
-      duration: 1,
-      ease: 'back.out(1.7)'
-    }, '-=0.8')
-    .to(textRef.current, {
-      opacity: 1,
       y: 0,
-      duration: 0.8,
+      duration: 1.2,
       ease: 'power3.out'
-    }, '-=0.5');
-
+    }, "-=0.8");
   }, []);
 
   return (
-    <div className="relative w-full h-screen bg-black overflow-hidden">
-      <div ref={leftDivRef} className="absolute top-0 left-0 w-1/2 h-full bg-black z-50" />
-      <div ref={rightDivRef} className="absolute top-0 right-0 w-1/2 h-full bg-black z-50" />
-
-      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-gray-900 to-black z-0" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-green-500/20 rounded-full blur-[120px] pointer-events-none" />
-
-      <div ref={textRef} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 text-center w-full px-4 pointer-events-none">
-        <h1 className="glitch-text text-5xl md:text-8xl font-black text-white tracking-wider uppercase" data-text="NVIDIA RTX 5090">
+    <div className="relative w-full h-screen overflow-hidden bg-[#020202]">
+      {/* Subtle Glow */}
+      <div className="absolute top-[30%] left-1/2 -translate-x-1/2 w-[70%] h-[40%] bg-[#76b900]/5 blur-[100px] rounded-full pointer-events-none" />
+      
+      {/* Hero Text - Neeche shift kiya */}
+      <div ref={textRef} className="absolute top-[60%] left-1/2 -translate-x-1/2 z-20 text-center w-full px-4 pointer-events-none">
+        <h1 className="glitch-text text-5xl md:text-8xl font-black text-white tracking-tighter uppercase" data-text="NVIDIA RTX 5090">
           NVIDIA RTX 5090
         </h1>
-        <p className="mt-4 text-green-400 text-lg md:text-xl font-mono tracking-widest">
+        <p className="mt-2 text-[#76b900] text-xs md:text-lg font-mono tracking-[0.5em] uppercase font-bold opacity-80">
           The Ultimate Play
         </p>
       </div>
 
+      {/* 3D Canvas */}
       <div ref={canvasRef} className="absolute inset-0 z-10">
         <Canvas
-          camera={{ 
-            position: [0, 0, 5], 
-            fov: 75,
-            near: 0.1,
-            far: 1000
-          }}
-          gl={{
-            antialias: true,
-            alpha: true,
-            powerPreference: "high-performance"
-          }}
-          dpr={[1, 2]}
+          camera={{ position: [4, 0, 35], fov: 35 }}
+          gl={{ antialias: true, powerPreference: "high-performance" }}
+          dpr={[1, 1.5]}
         >
-          <color attach="background" args={['#000000']} />
+          <ambientLight intensity={0.3} />
+          <spotLight position={[10, 15, 10]} angle={0.15} penumbra={1} intensity={1.5} color="#76b900" />
           
-          <ambientLight intensity={0.5} />
-          <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
-          <directionalLight position={[-10, -10, -5]} intensity={0.3} />
-          <pointLight position={[0, 0, 10]} color="#00ff00" intensity={1} />
-          <spotLight position={[5, 5, 5]} angle={0.3} penumbra={1} intensity={0.5} castShadow />
-          
-          <Suspense fallback={<Loader />}>
-            <Model scale={3} position={[0, -0.5, 0]} />
+          <Suspense fallback={null}>
+            <Environment preset="night" />
+            
+            <Float speed={1.2} rotationIntensity={0.1} floatIntensity={0.3}>
+              {/* GPU ko upar shift kiya aur chota kiya */}
+              <Center position={[0, -1, 0]}>
+                <Model scale={4} /> 
+              </Center>
+            </Float>
+
+            <ContactShadows 
+              position={[0, -2, 0]} 
+              opacity={0.5} 
+              scale={10} 
+              blur={3} 
+              far={4} 
+            />
           </Suspense>
+
+          <OrbitControls 
+            enableZoom={false} 
+            enablePan={false}
+            maxPolarAngle={Math.PI / 2}
+            minPolarAngle={Math.PI / 2.5}
+          />
         </Canvas>
       </div>
+  <style>{`
+  /* Gaming Glitch Text Effect CSS */
 
-      <style>{`
-        .glitch-text {
-          position: relative;
-          color: white;
-          text-shadow: 2px 2px 0px #00ff00, -2px -2px 0px #ff00ff;
-          animation: glitch 1s infinite linear alternate-reverse;
-        }
-        
-        .glitch-text::before,
-        .glitch-text::after {
-          content: attr(data-text);
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-        }
-        
-        .glitch-text::before {
-          left: 2px;
-          text-shadow: -2px 0 #00ff00;
-          clip: rect(24px, 550px, 90px, 0);
-          animation: glitch-anim 2s infinite linear alternate-reverse;
-        }
-        
-        .glitch-text::after {
-          left: -2px;
-          text-shadow: -2px 0 #ff00ff;
-          clip: rect(85px, 550px, 140px, 0);
-          animation: glitch-anim 3s infinite linear alternate-reverse;
-        }
-        
-        @keyframes glitch {
-          0%, 100% { transform: translate(0,0); }
-          20% { transform: translate(-2px, 2px); }
-          40% { transform: translate(2px, -2px); }
-        }
-        
-        @keyframes glitch-anim {
-          0% { clip: rect(61px, 9999px, 52px, 0); }
-          50% { clip: rect(63px, 9999px, 37px, 0); }
-          100% { clip: rect(173px, 9999px, 166px, 0); }
-        }
+/* Main Glitch Text */
+.glitch-text {
+    font-size: 80px;
+    font-weight: bold;
+    text-transform: uppercase;
+    position: relative;
+    color: #fff;
+    letter-spacing: 8px;
+    animation: glitch-skew 1s infinite;
+    display: inline-block;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.glitch-text::before {
+    left: 2px;
+    text-shadow: -2px 0 #ff00de;
+    clip: rect(24px, 550px, 90px, 0);
+    animation: glitch-anim-1 2s infinite linear alternate-reverse;
+}
+
+.glitch-text::after {
+    left: -2px;
+    text-shadow: -2px 0 #00fff9, 2px 2px #ff00de;
+    clip: rect(85px, 550px, 140px, 0);
+    animation: glitch-anim-2 2.5s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim-1 {
+    0% {
+        clip: rect(103px, 9999px, 94px, 0);
+        transform: skew(0.8deg);
+    }
+    10% {
+        clip: rect(8px, 9999px, 148px, 0);
+        transform: skew(0.1deg);
+    }
+    20% {
+        clip: rect(146px, 9999px, 85px, 0);
+        transform: skew(0.5deg);
+    }
+    30% {
+        clip: rect(26px, 9999px, 123px, 0);
+        transform: skew(1deg);
+    }
+    40% {
+        clip: rect(62px, 9999px, 38px, 0);
+        transform: skew(0.3deg);
+    }
+    50% {
+        clip: rect(127px, 9999px, 8px, 0);
+        transform: skew(0.7deg);
+    }
+    60% {
+        clip: rect(15px, 9999px, 135px, 0);
+        transform: skew(0.2deg);
+    }
+    70% {
+        clip: rect(91px, 9999px, 53px, 0);
+        transform: skew(0.9deg);
+    }
+    80% {
+        clip: rect(44px, 9999px, 118px, 0);
+        transform: skew(0.4deg);
+    }
+    90% {
+        clip: rect(72px, 9999px, 21px, 0);
+        transform: skew(0.6deg);
+    }
+    100% {
+        clip: rect(109px, 9999px, 67px, 0);
+        transform: skew(0.8deg);
+    }
+}
+
+@keyframes glitch-anim-2 {
+    0% {
+        clip: rect(65px, 9999px, 119px, 0);
+        transform: skew(0.5deg);
+    }
+    10% {
+        clip: rect(132px, 9999px, 31px, 0);
+        transform: skew(0.9deg);
+    }
+    20% {
+        clip: rect(17px, 9999px, 98px, 0);
+        transform: skew(0.2deg);
+    }
+    30% {
+        clip: rect(88px, 9999px, 142px, 0);
+        transform: skew(0.7deg);
+    }
+    40% {
+        clip: rect(49px, 9999px, 73px, 0);
+        transform: skew(0.3deg);
+    }
+    50% {
+        clip: rect(114px, 9999px, 5px, 0);
+        transform: skew(1deg);
+    }
+    60% {
+        clip: rect(36px, 9999px, 126px, 0);
+        transform: skew(0.4deg);
+    }
+    70% {
+        clip: rect(81px, 9999px, 55px, 0);
+        transform: skew(0.8deg);
+    }
+    80% {
+        clip: rect(23px, 9999px, 107px, 0);
+        transform: skew(0.1deg);
+    }
+    90% {
+        clip: rect(96px, 9999px, 42px, 0);
+        transform: skew(0.6deg);
+    }
+    100% {
+        clip: rect(58px, 9999px, 133px, 0);
+        transform: skew(0.5deg);
+    }
+}
+
+@keyframes glitch-skew {
+    0% {
+        transform: skew(0deg);
+    }
+    10% {
+        transform: skew(-2deg);
+    }
+    20% {
+        transform: skew(1deg);
+    }
+    30% {
+        transform: skew(-1deg);
+    }
+    40% {
+        transform: skew(2deg);
+    }
+    50% {
+        transform: skew(-1deg);
+    }
+    60% {
+        transform: skew(1deg);
+    }
+    70% {
+        transform: skew(-2deg);
+    }
+    80% {
+        transform: skew(1deg);
+    }
+    90% {
+        transform: skew(-1deg);
+    }
+    100% {
+        transform: skew(0deg);
+    }
+}
+
+/* Alternative Glitch Effect - Style 2 */
+.glitch-text-2 {
+    font-size: 80px;
+    font-weight: bold;
+    color: #fff;
+    position: relative;
+    text-transform: uppercase;
+    animation: glitch-2 5s infinite;
+}
+
+.glitch-text-2::before {
+    content: attr(data-text);
+    position: absolute;
+    left: -2px;
+    text-shadow: -5px 0 #ff00de;
+    animation: glitch-loop-1 0.3s infinite;
+}
+
+.glitch-text-2::after {
+    content: attr(data-text);
+    position: absolute;
+    left: 2px;
+    text-shadow: 5px 0 #00fff9;
+    animation: glitch-loop-2 0.3s infinite;
+}
+
+@keyframes glitch-2 {
+    0%, 100% {
+        text-shadow: 0 0 0 transparent;
+    }
+    1% {
+        text-shadow: 2px 2px 0 #ff00de, -2px -2px 0 #00fff9;
+    }
+    2%, 98% {
+        text-shadow: 0 0 0 transparent;
+    }
+    99% {
+        text-shadow: -2px 2px 0 #ff00de, 2px -2px 0 #00fff9;
+    }
+}
+
+@keyframes glitch-loop-1 {
+    0% {
+        clip: rect(36px, 9999px, 9px, 0);
+    }
+    25% {
+        clip: rect(25px, 9999px, 99px, 0);
+    }
+    50% {
+        clip: rect(50px, 9999px, 102px, 0);
+    }
+    75% {
+        clip: rect(30px, 9999px, 92px, 0);
+    }
+    100% {
+        clip: rect(91px, 9999px, 46px, 0);
+    }
+}
+
+@keyframes glitch-loop-2 {
+    0% {
+        top: -1px;
+        left: 1px;
+        clip: rect(65px, 9999px, 119px, 0);
+    }
+    25% {
+        top: -6px;
+        left: 4px;
+        clip: rect(79px, 9999px, 19px, 0);
+    }
+    50% {
+        top: -3px;
+        left: 2px;
+        clip: rect(68px, 9999px, 11px, 0);
+    }
+    75% {
+        top: 0px;
+        left: -4px;
+        clip: rect(95px, 9999px, 53px, 0);
+    }
+    100% {
+        top: -1px;
+        left: -1px;
+        clip: rect(31px, 9999px, 149px, 0);
+    }
+}
+
+/* Neon Glow Glitch Effect - Style 3 */
+.glitch-text-neon {
+    font-size: 80px;
+    font-weight: bold;
+    color: #fff;
+    text-transform: uppercase;
+    animation: neon-flicker 1.5s infinite alternate;
+}
+
+@keyframes neon-flicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        text-shadow: 
+            0 0 10px #00ff00,
+            0 0 20px #00ff00,
+            0 0 30px #00ff00,
+            0 0 40px #00ff00,
+            0 0 70px #00ff00,
+            0 0 80px #00ff00;
+    }
+    20%, 24%, 55% {
+        text-shadow: none;
+    }
+}
+
+/* RGB Split Effect - Style 4 */
+.glitch-text-rgb {
+    font-size: 80px;
+    font-weight: bold;
+    color: #fff;
+    text-transform: uppercase;
+    position: relative;
+}
+
+.glitch-text-rgb::before,
+.glitch-text-rgb::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.glitch-text-rgb::before {
+    animation: rgb-glitch-1 0.2s infinite;
+    color: #ff00de;
+    z-index: -1;
+}
+
+.glitch-text-rgb::after {
+    animation: rgb-glitch-2 0.2s infinite;
+    color: #00fff9;
+    z-index: -2;
+}
+
+@keyframes rgb-glitch-1 {
+    0% {
+        transform: translate(0);
+    }
+    20% {
+        transform: translate(-2px, 2px);
+    }
+    40% {
+        transform: translate(-2px, -2px);
+    }
+    60% {
+        transform: translate(2px, 2px);
+    }
+    80% {
+        transform: translate(2px, -2px);
+    }
+    100% {
+        transform: translate(0);
+    }
+}
+
+@keyframes rgb-glitch-2 {
+    0% {
+        transform: translate(0);
+    }
+    20% {
+        transform: translate(2px, -2px);
+    }
+    40% {
+        transform: translate(2px, 2px);
+    }
+    60% {
+        transform: translate(-2px, -2px);
+    }
+    80% {
+        transform: translate(-2px, 2px);
+    }
+    100% {
+        transform: translate(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .glitch-text,
+    .glitch-text-2,
+    .glitch-text-neon,
+    .glitch-text-rgb {
+        font-size: 50px;
+        letter-spacing: 4px;
+    }
+}
+
+@media (max-width: 480px) {
+    .glitch-text,
+    .glitch-text-2,
+    .glitch-text-neon,
+    .glitch-text-rgb {
+        font-size: 35px;
+        letter-spacing: 2px;
+    }
+}
       `}</style>
     </div>
   );
