@@ -98,65 +98,68 @@ const Hero = () => {
         <div className="w-full md:w-5/12 flex flex-col justify-between h-full pointer-events-auto">
            
            {/* TEXT SECTION - GAMING STYLE WITH GLITCH EFFECT */}
-           <div ref={textRef} className="flex flex-col gap-0">
-              {/* SMALL HEADER - NEON GREEN GLOW */}
-              <h3 className="text-[#76b900] font-bold tracking-[0.5em] uppercase text-[10px] mb-3 brightness-150 contrast-125" style={{
-                textShadow: '0 0 15px #76b900, 0 0 25px #76b900, 0 0 35px #76b900, 3px 3px 2px rgba(0,0,0,1), 1px 1px 0px #000',
-                WebkitFontSmoothing: 'antialiased',
-                filter: 'drop-shadow(0 0 8px #76b900)'
-              }}>
-                NEXT GEN GRAPHICS
-              </h3>
-              
-              {/* MAIN HEADING - ULTRA SHARP & CLEAR */}
-              <h1 className="font-black leading-[0.85] tracking-[-0.04em] uppercase italic" style={{
-                fontSize: '64px',
-                color: '#ffffff',
-                WebkitFontSmoothing: 'antialiased',
-                MozOsxFontSmoothing: 'grayscale',
-                fontWeight: 900,
-                textShadow: `
-                  4px 4px 0px #000000,
-                  6px 6px 0px rgba(0,0,0,0.8),
-                  8px 8px 15px rgba(0,0,0,0.9),
-                  0 0 25px rgba(118, 185, 0, 0.4),
-                  1px 1px 0px #000,
-                  2px 2px 0px #000,
-                  3px 3px 0px #000
-                `,
-                filter: 'contrast(1.2) brightness(1.15)'
-              }}>
-                THE FUTURE <br/>
-                OF <span style={{
-                  color: '#76b900',
-                  textShadow: `
-                    4px 4px 0px #000000,
-                    6px 6px 0px rgba(0,0,0,0.8),
-                    0 0 20px #76b900,
-                    0 0 40px #76b900,
-                    0 0 60px #76b900,
-                    0 0 80px rgba(118,185,0,0.5),
-                    1px 1px 0px #000,
-                    2px 2px 0px #000,
-                    3px 3px 0px #000
-                  `,
-                  filter: 'brightness(1.3)'
-                }}>GAMING</span> <br/>
-                LIVES HERE
-              </h1>
-              
-              {/* PARAGRAPH - ULTRA SHARP & READABLE */}
-              <p className="font-bold text-xs max-w-[300px] mt-6 border-l-4 border-[#76b900] pl-4 leading-relaxed py-3 pr-3" style={{
-                color: '#f0f0f0',
-                backgroundColor: 'rgba(0, 0, 0, 0.9)',
-                textShadow: '0 0 12px rgba(118, 185, 0, 0.5), 2px 2px 6px rgba(0,0,0,1), 1px 1px 2px #000',
-                WebkitFontSmoothing: 'antialiased',
-                fontWeight: 700,
-                filter: 'contrast(1.2) brightness(1.1)'
-              }}>
-                Dominate the digital battlefield. Rise through the ranks and etch your name in gaming history.
-              </p>
-           </div>
+     <div ref={textRef} className="flex flex-col gap-0">
+
+  {/* SMALL HEADER */}
+  <h3
+    className="text-[#76b900] font-bold tracking-[0.5em] uppercase text-[10px] mb-3"
+    style={{
+      textShadow: `
+        0 0 8px #76b900,
+        0 0 18px #76b900
+      `
+    }}
+  >
+    NEXT GEN GRAPHICS
+  </h3>
+
+  {/* MAIN HEADING */}
+  <h1
+    className="font-black leading-[0.9] uppercase tracking-[-0.02em]"
+    style={{
+      fontSize: "64px",
+      color: "#ffffff",
+      fontWeight: 900,
+      textShadow: `
+        3px 3px 0 #000,
+        0 0 25px rgba(118,185,0,0.5)
+      `
+    }}
+  >
+    THE FUTURE <br />
+    OF{" "}
+    <span
+      style={{
+        color: "#76b900",
+        textShadow: `
+          3px 3px 0 #000,
+          0 0 15px #76b900,
+          0 0 35px rgba(118,185,0,0.8)
+        `
+      }}
+    >
+      GAMING
+    </span>{" "}
+    <br />
+    LIVES HERE
+  </h1>
+
+  {/* PARAGRAPH */}
+  <p
+    className="font-semibold text-sm max-w-[320px] mt-6 border-l-4 border-[#76b900] pl-4 leading-relaxed py-3 pr-3"
+    style={{
+      color: "#eaeaea",
+      backgroundColor: "rgba(0, 0, 0, 0.85)",
+      textShadow: `
+        0 0 8px rgba(118,185,0,0.4)
+      `
+    }}
+  >
+    Dominate the digital battlefield. Rise through the ranks and etch your name in gaming history.
+  </p>
+
+</div>
+
 
            {/* BUTTONS - SMALLER TEXT */}
            <div ref={btnRef} className="flex gap-4 mb-4">
@@ -182,19 +185,7 @@ const Hero = () => {
            
            <div className="flex flex-col items-end gap-5">
               
-              {/* VIDEO CARD */}
-              <div className="bg-[#0a0a0a]/90 backdrop-blur-md p-0.5 w-56 h-36 border border-[#76b900]/30 clip-trapezoid relative cursor-pointer shadow-2xl hover:border-[#76b900]/70 transition-all hover:scale-[1.02]">
-                 <div className="w-full h-full bg-[#111] overflow-hidden relative">
-                    <div className="absolute top-3 right-3 w-11 h-11 rounded-full bg-[#76b900] flex items-center justify-center z-10 hover:scale-110 transition-transform cursor-pointer" style={{
-                      boxShadow: '0 0 20px #76b900, 0 0 40px rgba(118,185,0,0.5)'
-                    }}>
-                       <svg className="w-4 h-4 text-black ml-1" fill="currentColor" viewBox="0 0 20 20">
-                          <path d="M6.3 2.841A1.5 1.5 0 004 4.11v11.78a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/>
-                       </svg>
-                    </div>
-                    <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=400" className="w-full h-full object-cover opacity-30 hover:opacity-45 transition-opacity" alt="stream" />
-                 </div>
-              </div>
+            
 
               {/* USER STAT CARD */}
               <div className="bg-[#0a0a0a]/95 backdrop-blur-xl p-5 w-52 border border-[#76b900]/30 clip-stat-card shadow-2xl hover:border-[#76b900]/70 transition-all">

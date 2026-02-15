@@ -6,12 +6,34 @@
 
 body {
   background-color: #0a0a0a;
-  color: white;
-  min-height: 100vh;
-  /* cursor: none; Default cursor is visible */
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #76b900;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #fff;
 }
 
 ::selection {
   background-color: var(--color-nvidia-green);
   color: black;
+}
+
+.clip-trapezoid {
+  clip-path: polygon(10% 0, 100% 0, 100% 90%, 90% 100%, 0 100%, 0 10%);
 }
