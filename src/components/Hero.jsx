@@ -1,15 +1,15 @@
-import React, { Suspense, useEffect, useRef } from 'react';
+ import React, { Suspense, useEffect, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { useGLTF, OrbitControls, Center, Environment, ContactShadows, Float } from '@react-three/drei';
+import { useGLTF, OrbitControls, Center, Environment, ContactShadows } from '@react-three/drei';
 import gsap from 'gsap';
 
 function Model({ scale }) {
-  const { scene } = useGLTF('/RTX3080Ti.glb'); 
+  const { scene } = useGLTF('./RTX3080Ti.glb'); 
   const groupRef = useRef();
   
   useFrame((state, delta) => {
     if (groupRef.current) {
-      groupRef.current.rotation.y += delta * 0.12;
+      groupRef.current.rotation.y += delta * 0.1;
     }
   });
 
@@ -21,453 +21,245 @@ function Model({ scale }) {
 }
 
 const Hero = () => {
-  const canvasRef = useRef(null);
   const textRef = useRef(null);
+  const btnRef = useRef(null);
 
   useEffect(() => {
-    const tl = gsap.timeline();
-    
-    gsap.set(canvasRef.current, { opacity: 0, y: 50 });
-    gsap.set(textRef.current, { opacity: 0, y: -30 });
-
-    tl.to(textRef.current, {
-      opacity: 1,
-      y: 0,
-      duration: 1.2,
-      ease: 'power3.out',
-      delay: 0.3
-    })
-    .to(canvasRef.current, {
-      opacity: 1,
-      y: 0,
-      duration: 1.2,
-      ease: 'power3.out'
-    }, "-=0.8");
+    gsap.from(textRef.current, { opacity: 0, y: -20, duration: 1, ease: 'power3.out' });
+    gsap.from(btnRef.current, { opacity: 0, y: 20, duration: 1, delay: 0.3, ease: 'power3.out' });
   }, []);
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-[#020202]">
-      {/* Subtle Glow */}
-      <div className="absolute top-[30%] left-1/2 -translate-x-1/2 w-[70%] h-[40%] bg-[#76b900]/5 blur-[100px] rounded-full pointer-events-none" />
+    <div className="relative w-full h-screen overflow-hidden bg-black text-white">
       
-      {/* Hero Text - Neeche shift kiya */}
-      <div ref={textRef} className="absolute top-[60%] left-1/2 -translate-x-1/2 z-20 text-center w-full px-4 pointer-events-none">
-        <h1 className="glitch-text text-5xl md:text-8xl font-black text-white tracking-tighter uppercase" data-text="NVIDIA RTX 5090">
-          NVIDIA RTX 5090
-        </h1>
-        <p className="mt-2 text-[#76b900] text-xs md:text-lg font-mono tracking-[0.5em] uppercase font-bold opacity-80">
-          The Ultimate Play
-        </p>
-      </div>
+      {/* --- BACKGROUND GLOWS --- */}
+      <div className="absolute top-0 right-[15%] w-[350px] h-[350px] bg-[#76b900]/10 blur-[120px] rounded-full pointer-events-none z-0"></div>
+      <div className="absolute bottom-0 left-[10%] w-[350px] h-[350px] bg-[#76b900]/5 blur-[120px] rounded-full pointer-events-none z-0"></div>
 
-      {/* 3D Canvas */}
-      <div ref={canvasRef} className="absolute inset-0 z-10">
-        <Canvas
-          camera={{ position: [4, 0, 35], fov: 35 }}
-          gl={{ antialias: true, powerPreference: "high-performance" }}
-          dpr={[1, 1.5]}
-        >
-          <ambientLight intensity={0.3} />
-          <spotLight position={[10, 15, 10]} angle={0.15} penumbra={1} intensity={1.5} color="#76b900" />
+      {/* --- INTERACTIVE 3D CANVAS (BACKGROUND LAYER) --- */}
+      <div className="absolute inset-0 w-full h-full z-[1]">
+        <Canvas camera={{ position: [0, 0, 45], fov: 40 }}>
+          <ambientLight intensity={1.2} />
+          <directionalLight position={[5, 5, 5]} intensity={1.5} color="#ffffff" />
+          <directionalLight position={[2,2,2]} intensity={0.8} color="#dbe0d3ff" />
+
+          <spotLight
+            position={[10, 10, 10]}
+            intensity={200}
+            angle={0.4}
+            penumbra={0.8}
+            color="#fefffcff"
+          />
           
-          <Suspense fallback={null}>
-            <Environment preset="night" />
-            
-            <Float speed={1.2} rotationIntensity={0.1} floatIntensity={0.3}>
-              {/* GPU ko upar shift kiya aur chota kiya */}
-              <Center position={[0, -1, 0]}>
-                <Model scale={4} /> 
-              </Center>
-            </Float>
+          <spotLight
+            position={[-10, 5, 10]}
+            intensity={150}
+            angle={0.35}
+            penumbra={1}
+            color="#ffffff"
+          />
+          
+          <pointLight position={[0, 5, 0]} intensity={100} color="#ffff" />
 
-            <ContactShadows 
-              position={[0, -2, 0]} 
-              opacity={0.5} 
-              scale={10} 
-              blur={3} 
-              far={4} 
+          <Suspense fallback={null}>
+            <Environment preset="city" environmentIntensity={0.8} />
+
+            <Center>
+              <Model scale={5.5} />
+            </Center>
+
+            <ContactShadows
+              position={[0, -2.5, 0]}
+              opacity={0.7}
+              scale={20}
+              blur={2}
+              color="#ffff"
             />
           </Suspense>
 
-          <OrbitControls 
-            enableZoom={false} 
+          <OrbitControls
+            makeDefault
+            enableZoom={true}
             enablePan={false}
-            maxPolarAngle={Math.PI / 2}
-            minPolarAngle={Math.PI / 2.5}
+            minDistance={20}
+            maxDistance={45}
+            enableDamping={true}
+            dampingFactor={0.05}
+            rotateSpeed={0.8}
+            autoRotate={false}
           />
         </Canvas>
       </div>
-  <style>{`
-  /* Gaming Glitch Text Effect CSS */
 
-/* Main Glitch Text */
-.glitch-text {
-    font-size: 80px;
-    font-weight: bold;
-    text-transform: uppercase;
-    position: relative;
-    color: #fff;
-    letter-spacing: 8px;
-    animation: glitch-skew 1s infinite;
-    display: inline-block;
-}
+      {/* --- MAIN UI CONTENT --- */}
+      <div className="container mx-auto h-full relative z-[100] flex justify-between px-10 pt-24 pb-12 pointer-events-none">
+        
+        {/* LEFT SIDE: Text Top & Buttons Bottom */}
+        <div className="w-full md:w-5/12 flex flex-col justify-between h-full pointer-events-auto">
+           
+           {/* TEXT SECTION - GAMING STYLE WITH GLITCH EFFECT */}
+           <div ref={textRef} className="flex flex-col gap-0">
+              {/* SMALL HEADER - NEON GREEN GLOW */}
+              <h3 className="text-[#76b900] font-bold tracking-[0.5em] uppercase text-[10px] mb-3 brightness-150 contrast-125" style={{
+                textShadow: '0 0 15px #76b900, 0 0 25px #76b900, 0 0 35px #76b900, 3px 3px 2px rgba(0,0,0,1), 1px 1px 0px #000',
+                WebkitFontSmoothing: 'antialiased',
+                filter: 'drop-shadow(0 0 8px #76b900)'
+              }}>
+                NEXT GEN GRAPHICS
+              </h3>
+              
+              {/* MAIN HEADING - ULTRA SHARP & CLEAR */}
+              <h1 className="font-black leading-[0.85] tracking-[-0.04em] uppercase italic" style={{
+                fontSize: '64px',
+                color: '#ffffff',
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+                fontWeight: 900,
+                textShadow: `
+                  4px 4px 0px #000000,
+                  6px 6px 0px rgba(0,0,0,0.8),
+                  8px 8px 15px rgba(0,0,0,0.9),
+                  0 0 25px rgba(118, 185, 0, 0.4),
+                  1px 1px 0px #000,
+                  2px 2px 0px #000,
+                  3px 3px 0px #000
+                `,
+                filter: 'contrast(1.2) brightness(1.15)'
+              }}>
+                THE FUTURE <br/>
+                OF <span style={{
+                  color: '#76b900',
+                  textShadow: `
+                    4px 4px 0px #000000,
+                    6px 6px 0px rgba(0,0,0,0.8),
+                    0 0 20px #76b900,
+                    0 0 40px #76b900,
+                    0 0 60px #76b900,
+                    0 0 80px rgba(118,185,0,0.5),
+                    1px 1px 0px #000,
+                    2px 2px 0px #000,
+                    3px 3px 0px #000
+                  `,
+                  filter: 'brightness(1.3)'
+                }}>GAMING</span> <br/>
+                LIVES HERE
+              </h1>
+              
+              {/* PARAGRAPH - ULTRA SHARP & READABLE */}
+              <p className="font-bold text-xs max-w-[300px] mt-6 border-l-4 border-[#76b900] pl-4 leading-relaxed py-3 pr-3" style={{
+                color: '#f0f0f0',
+                backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                textShadow: '0 0 12px rgba(118, 185, 0, 0.5), 2px 2px 6px rgba(0,0,0,1), 1px 1px 2px #000',
+                WebkitFontSmoothing: 'antialiased',
+                fontWeight: 700,
+                filter: 'contrast(1.2) brightness(1.1)'
+              }}>
+                Dominate the digital battlefield. Rise through the ranks and etch your name in gaming history.
+              </p>
+           </div>
 
-.glitch-text::before,
-.glitch-text::after {
-    content: attr(data-text);
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
+           {/* BUTTONS - SMALLER TEXT */}
+           <div ref={btnRef} className="flex gap-4 mb-4">
+              <button className="px-8 py-3 bg-[#76b900] text-black font-black uppercase text-[10px] tracking-widest clip-button hover:brightness-110 transition-all hover:scale-105" style={{
+                WebkitFontSmoothing: 'antialiased',
+                boxShadow: '0 0 25px rgba(118,185,0,0.6), inset 0 0 20px rgba(255,255,255,0.2)'
+              }}>
+                PLAY NOW
+              </button>
+              <button className="px-8 py-3 border-2 border-[#76b900]/60 bg-black/80 font-black uppercase text-[10px] tracking-widest clip-button transition-all hover:scale-105" style={{
+                color: '#76b900',
+                WebkitFontSmoothing: 'antialiased',
+                textShadow: '0 0 10px rgba(118,185,0,0.8)',
+                boxShadow: '0 0 15px rgba(118,185,0,0.3)'
+              }}>
+                JOIN BATTLE
+              </button>
+           </div>
+        </div>
 
-.glitch-text::before {
-    left: 2px;
-    text-shadow: -2px 0 #ff00de;
-    clip: rect(24px, 550px, 90px, 0);
-    animation: glitch-anim-1 2s infinite linear alternate-reverse;
-}
+        {/* RIGHT SIDE: HUD Elements */}
+        <div className="w-full md:w-4/12 flex flex-col justify-end items-end h-full relative pointer-events-auto pb-4">
+           
+           <div className="flex flex-col items-end gap-5">
+              
+              {/* VIDEO CARD */}
+              <div className="bg-[#0a0a0a]/90 backdrop-blur-md p-0.5 w-56 h-36 border border-[#76b900]/30 clip-trapezoid relative cursor-pointer shadow-2xl hover:border-[#76b900]/70 transition-all hover:scale-[1.02]">
+                 <div className="w-full h-full bg-[#111] overflow-hidden relative">
+                    <div className="absolute top-3 right-3 w-11 h-11 rounded-full bg-[#76b900] flex items-center justify-center z-10 hover:scale-110 transition-transform cursor-pointer" style={{
+                      boxShadow: '0 0 20px #76b900, 0 0 40px rgba(118,185,0,0.5)'
+                    }}>
+                       <svg className="w-4 h-4 text-black ml-1" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M6.3 2.841A1.5 1.5 0 004 4.11v11.78a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/>
+                       </svg>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=400" className="w-full h-full object-cover opacity-30 hover:opacity-45 transition-opacity" alt="stream" />
+                 </div>
+              </div>
 
-.glitch-text::after {
-    left: -2px;
-    text-shadow: -2px 0 #00fff9, 2px 2px #ff00de;
-    clip: rect(85px, 550px, 140px, 0);
-    animation: glitch-anim-2 2.5s infinite linear alternate-reverse;
-}
+              {/* USER STAT CARD */}
+              <div className="bg-[#0a0a0a]/95 backdrop-blur-xl p-5 w-52 border border-[#76b900]/30 clip-stat-card shadow-2xl hover:border-[#76b900]/70 transition-all">
+                 <div className="flex items-baseline gap-2 mb-3">
+                    <span className="text-4xl font-black italic brightness-110" style={{
+                      color: '#ffffff',
+                      WebkitFontSmoothing: 'antialiased',
+                      textShadow: '0 0 20px rgba(118,185,0,0.6), 3px 3px 6px rgba(0,0,0,0.9)'
+                    }}>120k</span>
+                    <span className="text-[#76b900] text-[10px] font-bold uppercase tracking-widest italic brightness-150" style={{
+                      WebkitFontSmoothing: 'antialiased',
+                      textShadow: '0 0 10px #76b900'
+                    }}>USERS</span>
+                 </div>
+                 <div className="flex -space-x-2">
+                    {[1,2,3].map((i) => (
+                       <div key={i} className="w-8 h-8 rounded-full border-2 border-black bg-gray-800 overflow-hidden hover:scale-110 hover:z-10 transition-transform" style={{
+                         boxShadow: '0 0 10px rgba(118,185,0,0.3)'
+                       }}>
+                          <img src={`https://i.pravatar.cc/100?img=${i+25}`} alt="avatar" className="w-full h-full object-cover" />
+                       </div>
+                    ))}
+                 </div>
+              </div>
 
-@keyframes glitch-anim-1 {
-    0% {
-        clip: rect(103px, 9999px, 94px, 0);
-        transform: skew(0.8deg);
-    }
-    10% {
-        clip: rect(8px, 9999px, 148px, 0);
-        transform: skew(0.1deg);
-    }
-    20% {
-        clip: rect(146px, 9999px, 85px, 0);
-        transform: skew(0.5deg);
-    }
-    30% {
-        clip: rect(26px, 9999px, 123px, 0);
-        transform: skew(1deg);
-    }
-    40% {
-        clip: rect(62px, 9999px, 38px, 0);
-        transform: skew(0.3deg);
-    }
-    50% {
-        clip: rect(127px, 9999px, 8px, 0);
-        transform: skew(0.7deg);
-    }
-    60% {
-        clip: rect(15px, 9999px, 135px, 0);
-        transform: skew(0.2deg);
-    }
-    70% {
-        clip: rect(91px, 9999px, 53px, 0);
-        transform: skew(0.9deg);
-    }
-    80% {
-        clip: rect(44px, 9999px, 118px, 0);
-        transform: skew(0.4deg);
-    }
-    90% {
-        clip: rect(72px, 9999px, 21px, 0);
-        transform: skew(0.6deg);
-    }
-    100% {
-        clip: rect(109px, 9999px, 67px, 0);
-        transform: skew(0.8deg);
-    }
-}
+              {/* SOCIAL ICONS - NOW IN COLUMN LAYOUT */}
+              <div className="flex flex-col gap-3">
+                 {['FB', 'IG', 'X', 'DC'].map((s, idx) => (
+                    <a key={s} href="#" className={`w-11 h-11 flex items-center justify-center rounded-lg text-[11px] font-black border transition-all hover:scale-110
+                       ${idx === 0 
+                         ? 'bg-[#76b900] text-black border-[#76b900]' 
+                         : 'bg-black/80 text-[#76b900] border-[#76b900]/40 hover:bg-[#76b900] hover:text-black hover:border-[#76b900]'
+                       }`} style={{
+                      WebkitFontSmoothing: 'antialiased',
+                      boxShadow: idx === 0 
+                        ? '0 0 25px rgba(118,185,0,0.8)' 
+                        : '0 0 15px rgba(118,185,0,0.3)',
+                      textShadow: idx === 0 ? 'none' : '0 0 10px #76b900'
+                    }}>
+                       {s}
+                    </a>
+                 ))}
+              </div>
+           </div>
 
-@keyframes glitch-anim-2 {
-    0% {
-        clip: rect(65px, 9999px, 119px, 0);
-        transform: skew(0.5deg);
-    }
-    10% {
-        clip: rect(132px, 9999px, 31px, 0);
-        transform: skew(0.9deg);
-    }
-    20% {
-        clip: rect(17px, 9999px, 98px, 0);
-        transform: skew(0.2deg);
-    }
-    30% {
-        clip: rect(88px, 9999px, 142px, 0);
-        transform: skew(0.7deg);
-    }
-    40% {
-        clip: rect(49px, 9999px, 73px, 0);
-        transform: skew(0.3deg);
-    }
-    50% {
-        clip: rect(114px, 9999px, 5px, 0);
-        transform: skew(1deg);
-    }
-    60% {
-        clip: rect(36px, 9999px, 126px, 0);
-        transform: skew(0.4deg);
-    }
-    70% {
-        clip: rect(81px, 9999px, 55px, 0);
-        transform: skew(0.8deg);
-    }
-    80% {
-        clip: rect(23px, 9999px, 107px, 0);
-        transform: skew(0.1deg);
-    }
-    90% {
-        clip: rect(96px, 9999px, 42px, 0);
-        transform: skew(0.6deg);
-    }
-    100% {
-        clip: rect(58px, 9999px, 133px, 0);
-        transform: skew(0.5deg);
-    }
-}
+        </div>
+      </div>
 
-@keyframes glitch-skew {
-    0% {
-        transform: skew(0deg);
-    }
-    10% {
-        transform: skew(-2deg);
-    }
-    20% {
-        transform: skew(1deg);
-    }
-    30% {
-        transform: skew(-1deg);
-    }
-    40% {
-        transform: skew(2deg);
-    }
-    50% {
-        transform: skew(-1deg);
-    }
-    60% {
-        transform: skew(1deg);
-    }
-    70% {
-        transform: skew(-2deg);
-    }
-    80% {
-        transform: skew(1deg);
-    }
-    90% {
-        transform: skew(-1deg);
-    }
-    100% {
-        transform: skew(0deg);
-    }
-}
-
-/* Alternative Glitch Effect - Style 2 */
-.glitch-text-2 {
-    font-size: 80px;
-    font-weight: bold;
-    color: #fff;
-    position: relative;
-    text-transform: uppercase;
-    animation: glitch-2 5s infinite;
-}
-
-.glitch-text-2::before {
-    content: attr(data-text);
-    position: absolute;
-    left: -2px;
-    text-shadow: -5px 0 #ff00de;
-    animation: glitch-loop-1 0.3s infinite;
-}
-
-.glitch-text-2::after {
-    content: attr(data-text);
-    position: absolute;
-    left: 2px;
-    text-shadow: 5px 0 #00fff9;
-    animation: glitch-loop-2 0.3s infinite;
-}
-
-@keyframes glitch-2 {
-    0%, 100% {
-        text-shadow: 0 0 0 transparent;
-    }
-    1% {
-        text-shadow: 2px 2px 0 #ff00de, -2px -2px 0 #00fff9;
-    }
-    2%, 98% {
-        text-shadow: 0 0 0 transparent;
-    }
-    99% {
-        text-shadow: -2px 2px 0 #ff00de, 2px -2px 0 #00fff9;
-    }
-}
-
-@keyframes glitch-loop-1 {
-    0% {
-        clip: rect(36px, 9999px, 9px, 0);
-    }
-    25% {
-        clip: rect(25px, 9999px, 99px, 0);
-    }
-    50% {
-        clip: rect(50px, 9999px, 102px, 0);
-    }
-    75% {
-        clip: rect(30px, 9999px, 92px, 0);
-    }
-    100% {
-        clip: rect(91px, 9999px, 46px, 0);
-    }
-}
-
-@keyframes glitch-loop-2 {
-    0% {
-        top: -1px;
-        left: 1px;
-        clip: rect(65px, 9999px, 119px, 0);
-    }
-    25% {
-        top: -6px;
-        left: 4px;
-        clip: rect(79px, 9999px, 19px, 0);
-    }
-    50% {
-        top: -3px;
-        left: 2px;
-        clip: rect(68px, 9999px, 11px, 0);
-    }
-    75% {
-        top: 0px;
-        left: -4px;
-        clip: rect(95px, 9999px, 53px, 0);
-    }
-    100% {
-        top: -1px;
-        left: -1px;
-        clip: rect(31px, 9999px, 149px, 0);
-    }
-}
-
-/* Neon Glow Glitch Effect - Style 3 */
-.glitch-text-neon {
-    font-size: 80px;
-    font-weight: bold;
-    color: #fff;
-    text-transform: uppercase;
-    animation: neon-flicker 1.5s infinite alternate;
-}
-
-@keyframes neon-flicker {
-    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
-        text-shadow: 
-            0 0 10px #00ff00,
-            0 0 20px #00ff00,
-            0 0 30px #00ff00,
-            0 0 40px #00ff00,
-            0 0 70px #00ff00,
-            0 0 80px #00ff00;
-    }
-    20%, 24%, 55% {
-        text-shadow: none;
-    }
-}
-
-/* RGB Split Effect - Style 4 */
-.glitch-text-rgb {
-    font-size: 80px;
-    font-weight: bold;
-    color: #fff;
-    text-transform: uppercase;
-    position: relative;
-}
-
-.glitch-text-rgb::before,
-.glitch-text-rgb::after {
-    content: attr(data-text);
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-.glitch-text-rgb::before {
-    animation: rgb-glitch-1 0.2s infinite;
-    color: #ff00de;
-    z-index: -1;
-}
-
-.glitch-text-rgb::after {
-    animation: rgb-glitch-2 0.2s infinite;
-    color: #00fff9;
-    z-index: -2;
-}
-
-@keyframes rgb-glitch-1 {
-    0% {
-        transform: translate(0);
-    }
-    20% {
-        transform: translate(-2px, 2px);
-    }
-    40% {
-        transform: translate(-2px, -2px);
-    }
-    60% {
-        transform: translate(2px, 2px);
-    }
-    80% {
-        transform: translate(2px, -2px);
-    }
-    100% {
-        transform: translate(0);
-    }
-}
-
-@keyframes rgb-glitch-2 {
-    0% {
-        transform: translate(0);
-    }
-    20% {
-        transform: translate(2px, -2px);
-    }
-    40% {
-        transform: translate(2px, 2px);
-    }
-    60% {
-        transform: translate(-2px, -2px);
-    }
-    80% {
-        transform: translate(-2px, 2px);
-    }
-    100% {
-        transform: translate(0);
-    }
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .glitch-text,
-    .glitch-text-2,
-    .glitch-text-neon,
-    .glitch-text-rgb {
-        font-size: 50px;
-        letter-spacing: 4px;
-    }
-}
-
-@media (max-width: 480px) {
-    .glitch-text,
-    .glitch-text-2,
-    .glitch-text-neon,
-    .glitch-text-rgb {
-        font-size: 35px;
-        letter-spacing: 2px;
-    }
-}
+      
+      <style>{` 
+        * {
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          text-rendering: optimizeLegibility;
+        }
+        
+        .clip-trapezoid { 
+          clip-path: polygon(10% 0, 100% 0, 100% 90%, 90% 100%, 0 100%, 0 10%); 
+        }
+        .clip-stat-card { 
+          clip-path: polygon(0 0, 100% 0, 100% 78%, 82% 100%, 0 100%); 
+        }
+        .clip-button { 
+          clip-path: polygon(6% 0, 100% 0, 94% 100%, 0 100%); 
+        }
       `}</style>
     </div>
   );
