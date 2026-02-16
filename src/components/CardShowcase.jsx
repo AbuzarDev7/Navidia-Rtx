@@ -57,36 +57,38 @@ const CardShowcase = () => {
         finalCard,
         {
           x: '120vw',
-          y: 0,
-          scale: 0.5,
+          y: 4 * 10, // Offset to match previous cards logic
+          rotation: 5,
           opacity: 0,
-          rotation: 10
+          scale: 0.9, // Slightly smaller initially to look "behind"
         },
         {
           x: 0,
-          y: 0,
-          scale: 1,
-          opacity: 1,
+          y: 4 * 5, // Stack it after the 4th card (index 3 * 5 = 15)
           rotation: 0,
+          opacity: 1,
+          scale: 1,
           duration: 1,
-          ease: 'back.out(1.7)',
-        }
+          ease: 'power2.out',
+        },
+        "-=0.5" // Overlap slightly with the last card animation
       );
 
       // Expand final card to full screen
       tl.to(finalCard, {
-        scale: 1, // Reset scale relative to container if needed, but we want full screen
+        scale: 1, 
         width: '100vw',
         height: '100vh',
-        x: 0,
+        x: '-50vw', // Move to the left to cover the left panel (since we are in the right panel)
         y: 0,
-        position: 'fixed',
+        position: 'absolute', // Use absolute to respect scroll flow but break out of flex
         top: 0,
-        left: 0,
-        zIndex: 50,
+        left: 0, // Relative to right panel start
+        margin: 0,
+        zIndex: 100,
         borderRadius: 0,
         duration: 2,
-        ease: 'power2.inOut',
+        ease: 'power4.inOut',
       });
       
       // Optional: fade out other elements when final card expands
@@ -128,49 +130,61 @@ const CardShowcase = () => {
       </div>
 
       {/* Right Panel area where cards enter */}
-      <div ref={rightPanelRef} className="w-1/2 h-full relative z-10 flex items-center justify-center">
-        {/* Placeholder Cards */}
+      <div ref={rightPanelRef} className="w-1/2 h-full relative z-10 flex items-center justify-center perspective-[2000px]">
+        {/* GPU Cards */}
         {[1, 2, 3, 4].map((item, index) => (
           <div
             key={index}
             ref={addToRefs}
-            className="absolute w-[350px] h-[500px] bg-gradient-to-br from-[#1a1a1a] to-[#0d0d0d] border border-[#333] rounded-2xl p-6 shadow-2xl flex flex-col justify-between"
-            style={{ zIndex: index }}
+            className="absolute w-[350px] h-[500px] rounded-2xl overflow-hidden shadow-2xl border border-white/10 group"
+            style={{ zIndex: index + 1 }} // Ensure correct stacking order
           >
-           <div className="w-full h-40 bg-gray-800 rounded-lg mb-4 flex items-center justify-center overflow-hidden">
-             {/* Placeholder for GPU Image */}
-             <div className="w-20 h-20 bg-[#76b900] rounded-full blur-2xl opacity-20"></div>
-             <span className="text-gray-500 font-mono text-sm">GPU MODEL {item}</span>
-           </div>
-           <div>
-             <h3 className="text-2xl font-bold text-white mb-2">RTX 40{item}0</h3>
-             <p className="text-gray-400 text-sm">Extreme performance for gaming and creating.</p>
-           </div>
-           <div className="flex justify-between items-center mt-4">
-             <span className="text-[#76b900] font-bold">$ {item}99</span>
-             <button className="px-4 py-2 border border-white/20 rounded-lg hover:bg-white hover:text-black transition-colors text-sm">
-               Buy Now
-             </button>
-           </div>
+            {/* Background Image */}
+            <div className="absolute inset-0 bg-cover bg-center transition-transform group-hover:scale-110 duration-700" 
+                 style={{ backgroundImage: `url('https://assets.nvidia.com/hidef/images/geforce-rtx-4090/geforce-rtx-4090-product-gallery-1.jpg')` }}> {/* Using placeholder for now */}
+            </div>
+            
+            {/* Overlay for readability */}
+            <div className="absolute inset-0 bg-black/60 group-hover:bg-black/40 transition-colors duration-500"></div>
+
+            {/* Content Container */}
+            <div className="absolute inset-0 p-8 flex flex-col items-center justify-center">
+                
+                {/* Main Text - Centered & Minimal */}
+                <div className="transform transition-transform duration-500 group-hover:scale-110">
+                  <h3 className="text-6xl font-black text-white tracking-tighter italic drop-shadow-[0_5px_5px_rgba(0,0,0,0.8)]">
+                    RTX <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#76b900] to-white">40{item}0</span>
+                  </h3>
+                  <div className="h-1 w-24 bg-[#76b900] mx-auto mt-4 rounded-full shadow-[0_0_10px_#76b900] opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                </div>
+
+              </div>
           </div>
         ))}
 
-        {/* Final Card - Coming Soon */}
+        {/* Final Card - Coming Soon (Premium) */}
         <div
           ref={finalCardRef}
-          className="absolute w-[400px] h-[600px] bg-black border border-[#76b900] rounded-2xl flex flex-col items-center justify-center z-20 overflow-hidden shadow-[0_0_50px_rgba(118,185,0,0.3)]"
+          className="absolute w-[350px] h-[500px] rounded-[30px] bg-black border border-[#76b900]/50 flex flex-col items-center justify-center overflow-hidden shadow-[0_0_50px_rgba(118,185,0,0.3)]"
+          style={{ zIndex: 0 }} // Initially behind (visually, will be controlled by animation)
         >
-          <div className="absolute inset-0 bg-[url('https://assets.nvidia.com/hidef/images/geforce-rtx-4090/geforce-rtx-4090-product-gallery-1.jpg')] bg-cover bg-center opacity-30"></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black"></div>
+          <div className="absolute inset-0 bg-[url('https://assets.nvidia.com/hidef/images/geforce-rtx-4090/geforce-rtx-4090-product-gallery-1.jpg')] bg-cover bg-center opacity-10 blur-sm scale-110"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black"></div>
+           {/* Animated Grid Background */}
+           <div className="absolute inset-0 bg-[linear-gradient(rgba(118,185,0,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(118,185,0,0.05)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_70%)]"></div>
           
-          <div className="relative z-10 text-center p-10">
-            <h2 className="text-[#76b900] text-7xl font-black mb-4 tracking-tighter shadow-black drop-shadow-lg">
+          <div className="relative z-10 text-center p-12 w-full">
+            <h2 className="text-[#76b900] text-7xl font-black mb-6 tracking-tighter relative z-20 drop-shadow-[0_0_25px_rgba(118,185,0,0.8)]">
               RTX 5090
             </h2>
-            <p className="text-3xl font-light tracking-[0.5em] text-white uppercase mb-8">
-              Coming Soon
-            </p>
-            <div className="w-24 h-1 bg-[#76b900] mx-auto"></div>
+            
+            <div className="flex items-center justify-center gap-4">
+              <span className="h-[1px] w-12 bg-gray-500"></span>
+              <p className="text-2xl font-light tracking-[0.6em] text-white uppercase">
+                Coming Soon
+              </p>
+              <span className="h-[1px] w-12 bg-gray-500"></span>
+            </div>
           </div>
         </div>
       </div>

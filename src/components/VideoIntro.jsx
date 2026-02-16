@@ -7,15 +7,25 @@ const VideoIntro = ({ onComplete }) => {
   const videoContainerRef = useRef(null);
 
   useEffect(() => {
+    // Lock scroll on mount
+    document.body.style.overflow = 'hidden';
+
     const timer = setTimeout(() => {
       setHideOverlay(true);
       setTimeout(() => animateToCard(), 100);
     }, 10000); 
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      // Ensure scroll is enabled if component unmounts
+      document.body.style.overflow = 'auto';
+    };
   }, []);
 
   const animateToCard = () => {
+    // Unlock scroll when animation starts
+    document.body.style.overflow = 'auto';
+    
     const container = videoContainerRef.current;
     if (!container) return;
 
@@ -62,7 +72,7 @@ const VideoIntro = ({ onComplete }) => {
     <div
       ref={videoContainerRef}
       onContextMenu={(e) => e.preventDefault()}
-      className="fixed z-[200] bg-black top-0 left-0 overflow-hidden select-none"
+      className="absolute z-[200] bg-black top-0 left-0 overflow-hidden select-none"
       style={{ width: '100vw', height: '100vh' }}
     >
       <video
