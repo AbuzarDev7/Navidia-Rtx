@@ -157,10 +157,10 @@ const AwardSection = () => {
   }, []);
 
   const cards = [
-    { title: "Call of Duty: MW II", img: "https://upload.wikimedia.org/wikipedia/en/4/4a/Call_of_Duty_Modern_Warfare_II_Key_Art.jpg" },
-    { title: "Assassin's Creed Shadows", img: "https://gaming-cdn.com/images/products/16829/orig/assassin-s-creed-shadows-xbox-series-x-s-microsoft-store-cover.jpg?v=1760450567" },
-    { title: "Forza Horizon 5", img: "https://upload.wikimedia.org/wikipedia/en/8/86/Forza_Horizon_5_cover_art.jpg" },
-    { title: "Red Dead Redemption 2", img: "https://upload.wikimedia.org/wikipedia/en/4/44/Red_Dead_Redemption_II.jpg" }
+    { img: "https://upload.wikimedia.org/wikipedia/en/4/4a/Call_of_Duty_Modern_Warfare_II_Key_Art.jpg" },
+    {  img: "https://gaming-cdn.com/images/products/16829/orig/assassin-s-creed-shadows-xbox-series-x-s-microsoft-store-cover.jpg?v=1760450567" },
+    {  img: "https://upload.wikimedia.org/wikipedia/en/8/86/Forza_Horizon_5_cover_art.jpg" },
+    {img: "https://upload.wikimedia.org/wikipedia/en/4/44/Red_Dead_Redemption_II.jpg" }
   ];
 
   return (

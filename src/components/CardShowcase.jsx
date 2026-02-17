@@ -120,7 +120,7 @@ const CardShowcase = () => {
         <h1 className="text-6xl font-black mb-6 leading-tight">
           GEFORCE RTX <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-[#dacfc0]">
-            40 SERIES
+            40 & 50 SERIES
           </span>
         </h1>
         <p className="text-gray-400 text-lg max-w-md mb-8">

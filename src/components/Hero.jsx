@@ -2,6 +2,7 @@
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useGLTF, OrbitControls, Center, Environment, ContactShadows } from '@react-three/drei';
 import gsap from 'gsap';
+import VideoIntro from './VideoIntro';
 
 function Model({ scale }) {
   const { scene } = useGLTF('./RTX3080Ti.glb'); 
@@ -20,7 +21,7 @@ function Model({ scale }) {
   );
 }
 
-const Hero = () => {
+const Hero = ({ onIntroComplete }) => {
   const textRef = useRef(null);
   const btnRef = useRef(null);
 
@@ -41,14 +42,14 @@ const Hero = () => {
         <Canvas camera={{ position: [0, 0, 45], fov: 40 }}>
           <ambientLight intensity={1.2} />
           <directionalLight position={[5, 5, 5]} intensity={1.5} color="#ffffff" />
-          <directionalLight position={[2,2,2]} intensity={0.8} color="#dbe0d3ff" />
+          <directionalLight position={[2,2,2]} intensity={0.8} color="#dbe0d3" />
 
           <spotLight
             position={[10, 10, 10]}
             intensity={200}
             angle={0.4}
             penumbra={0.8}
-            color="#fefffcff"
+            color="#fefffc"
           />
           
           <spotLight
@@ -59,7 +60,7 @@ const Hero = () => {
             color="#ffffff"
           />
           
-          <pointLight position={[0, 5, 0]} intensity={100} color="#ffff" />
+          <pointLight position={[0, 5, 0]} intensity={100} color="#ffffff" />
 
           <Suspense fallback={null}>
             <Environment preset="city" environmentIntensity={0.8} />
@@ -73,7 +74,7 @@ const Hero = () => {
               opacity={0.7}
               scale={20}
               blur={2}
-              color="#ffff"
+              color="#ffffff"
             />
           </Suspense>
 
@@ -252,6 +253,9 @@ const Hero = () => {
           clip-path: polygon(6% 0, 100% 0, 94% 100%, 0 100%); 
         }
       `}</style>
+
+      {/* --- VIDEO INTRO OVERLAY --- */}
+      <VideoIntro onComplete={onIntroComplete} />
     </div>
   );
 };

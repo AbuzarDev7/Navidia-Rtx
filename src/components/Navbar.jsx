@@ -12,7 +12,7 @@ const Navbar = () => {
   ];
 
   return (
-    <div className="fixed top-0 inset-x-0 z-50 flex justify-between items-start px-8 pt-6 pointer-events-none">
+    <div className="fixed top-0 inset-x-0 z-[1000] flex justify-between items-start px-8 pt-6 pointer-events-none">
       
       {/* Left Section - Links */}
       <nav className="pointer-events-auto hidden md:flex items-center space-x-8">

@@ -1,14 +1,50 @@
 import React, { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import introVideo from '../assets/videos/intro.mp4'; 
+
+// Define handlers outside to ensure stable references for add/removeEventListener
+const preventDefault = (e) => {
+  e.preventDefault();
+};
+
+const preventDefaultForScrollKeys = (e) => {
+  const keys = ['ArrowUp', 'ArrowDown', 'Space', 'PageUp', 'PageDown', 'Home', 'End'];
+  if (keys.includes(e.code)) {
+    e.preventDefault();
+  }
+};
+
 const VideoIntro = ({ onComplete }) => {
   const [isVisible, setIsVisible] = useState(true);
   const [hideOverlay, setHideOverlay] = useState(false);
   const videoContainerRef = useRef(null);
 
+  // Define unlockScroll in scope so it can be used anywhere
+  const unlockScroll = () => {
+    document.body.style.overflow = '';
+    document.documentElement.style.overflow = '';
+    
+    window.removeEventListener('wheel', preventDefault);
+    window.removeEventListener('touchmove', preventDefault);
+    window.removeEventListener('keydown', preventDefaultForScrollKeys);
+  };
+
   useEffect(() => {
     // Lock scroll on mount
-    document.body.style.overflow = 'hidden';
+    const lockScroll = () => {
+      window.scrollTo(0, 0); // Ensure we start at top
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden'; // Lock html too
+      
+      // Prevent wheel scroll
+      window.addEventListener('wheel', preventDefault, { passive: false });
+      // Prevent touch scroll
+      window.addEventListener('touchmove', preventDefault, { passive: false });
+      // Prevent keyboard scroll
+      window.addEventListener('keydown', preventDefaultForScrollKeys, { passive: false });
+    };
+
+    lockScroll();
 
     const timer = setTimeout(() => {
       setHideOverlay(true);
@@ -17,14 +53,11 @@ const VideoIntro = ({ onComplete }) => {
 
     return () => {
       clearTimeout(timer);
-      // Ensure scroll is enabled if component unmounts
-      document.body.style.overflow = 'auto';
+      unlockScroll();
     };
   }, []);
 
   const animateToCard = () => {
-    // Unlock scroll when animation starts
-    document.body.style.overflow = 'auto';
     
     const container = videoContainerRef.current;
     if (!container) return;
@@ -45,6 +78,17 @@ const VideoIntro = ({ onComplete }) => {
 
     const tl = gsap.timeline({
       onComplete: () => {
+        if (container) {
+          // Switch to absolute positioning relative to parent (Hero) after animation
+          // This allows it to scroll with the page
+          container.style.position = 'absolute';
+          // Lower z-index so it scrolls UNDER the navbar (which is z-[1000])
+          container.style.zIndex = '10';
+        }
+        
+        // Unlock scroll using the scoped function
+        unlockScroll();
+        
         if (onComplete) onComplete();
       }
     });
@@ -72,8 +116,8 @@ const VideoIntro = ({ onComplete }) => {
     <div
       ref={videoContainerRef}
       onContextMenu={(e) => e.preventDefault()}
-      className="absolute z-[200] bg-black top-0 left-0 overflow-hidden select-none"
-      style={{ width: '100vw', height: '100vh' }}
+      className="fixed z-[5000] bg-black top-0 left-0 overflow-hidden select-none"
+      style={{ width: '100%', height: '100vh' }}
     >
       <video
         autoPlay
