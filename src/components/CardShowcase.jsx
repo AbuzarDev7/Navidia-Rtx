@@ -2,6 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
+
+
 gsap.registerPlugin(ScrollTrigger);
 
 const CardShowcase = () => {
@@ -132,7 +134,12 @@ const CardShowcase = () => {
       {/* Right Panel area where cards enter */}
       <div ref={rightPanelRef} className="w-1/2 h-full relative z-10 flex items-center justify-center perspective-[2000px]">
         {/* GPU Cards */}
-        {[1, 2, 3, 4].map((item, index) => (
+        {[
+          { id: 1, name: "RTX 3080 Ti", img: "https://nvidianews.nvidia.com/_gallery/get_file/?file_id=60b5c5cded6ae549cd412207" },
+          { id: 2, name: "RTX 4010", img: "https://cdn.mos.cms.futurecdn.net/KYzGJSuUStbsaqqBVQrYfe.png" },
+          { id: 3, name: "RTX 4090", img: "https://i.pinimg.com/736x/cf/90/54/cf905474dfdef7dd5aa235a03fe80297.jpg" },
+          { id: 4, name: "RTX 5090", img: "https://i.pinimg.com/736x/de/5e/7b/de5e7b604735fa080b33e7b8f81f16d6.jpg" }
+        ].map((card, index) => (
           <div
             key={index}
             ref={addToRefs}
@@ -140,9 +147,12 @@ const CardShowcase = () => {
             style={{ zIndex: index + 1 }} // Ensure correct stacking order
           >
             {/* Background Image */}
-            <div className="absolute inset-0 bg-cover bg-center transition-transform group-hover:scale-110 duration-700" 
-                 style={{ backgroundImage: `url('https://assets.nvidia.com/hidef/images/geforce-rtx-4090/geforce-rtx-4090-product-gallery-1.jpg')` }}> {/* Using placeholder for now */}
-            </div>
+            {/* Background Image using img tag for better coverage */}
+            <img 
+              src={card.img} 
+              alt={`RTX ${card.name}`}
+              className="absolute inset-0 w-full h-full object-cover transition-transform group-hover:scale-110 duration-700"
+            />
             
             {/* Overlay for readability */}
             <div className="absolute inset-0 bg-black/60 group-hover:bg-black/40 transition-colors duration-500"></div>
@@ -152,8 +162,8 @@ const CardShowcase = () => {
                 
                 {/* Main Text - Centered & Minimal */}
                 <div className="transform transition-transform duration-500 group-hover:scale-110">
-                  <h3 className="text-6xl font-black text-white tracking-tighter italic drop-shadow-[0_5px_5px_rgba(0,0,0,0.8)]">
-                    RTX <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#76b900] to-white">40{item}0</span>
+                  <h3 className="text-6xl font-black text-white tracking-tighter italic drop-shadow-[0_5px_5px_rgba(0,0,0,0.8)] text-center">
+                    RTX <span className="block text-4xl mt-2 text-transparent bg-clip-text bg-gradient-to-r from-[#76b900] to-white">{card.name}</span>
                   </h3>
                   <div className="h-1 w-24 bg-[#76b900] mx-auto mt-4 rounded-full shadow-[0_0_10px_#76b900] opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 </div>
@@ -165,17 +175,21 @@ const CardShowcase = () => {
         {/* Final Card - Coming Soon (Premium) */}
         <div
           ref={finalCardRef}
-          className="absolute w-[350px] h-[500px] rounded-[30px] bg-black border border-[#76b900]/50 flex flex-col items-center justify-center overflow-hidden shadow-[0_0_50px_rgba(118,185,0,0.3)]"
+          className="absolute w-[350px] h-[500px] rounded-[30px] bg-black flex flex-col items-center justify-center overflow-hidden"
           style={{ zIndex: 0 }} // Initially behind (visually, will be controlled by animation)
         >
-          <div className="absolute inset-0 bg-[url('https://assets.nvidia.com/hidef/images/geforce-rtx-4090/geforce-rtx-4090-product-gallery-1.jpg')] bg-cover bg-center opacity-10 blur-sm scale-110"></div>
+          <img 
+            src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800&auto=format&fit=crop" 
+            alt="RTX 6090 Background" 
+            className="absolute inset-0 w-full h-full object-cover opacity-10 blur-sm scale-110"
+          />
           <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black"></div>
            {/* Animated Grid Background */}
            <div className="absolute inset-0 bg-[linear-gradient(rgba(118,185,0,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(118,185,0,0.05)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_70%)]"></div>
           
           <div className="relative z-10 text-center p-12 w-full">
             <h2 className="text-[#76b900] text-7xl font-black mb-6 tracking-tighter relative z-20 drop-shadow-[0_0_25px_rgba(118,185,0,0.8)]">
-              RTX 5090
+              RTX 6090
             </h2>
             
             <div className="flex items-center justify-center gap-4">

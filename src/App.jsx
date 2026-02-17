@@ -6,6 +6,7 @@ import Curser from './components/Curser';
 import Hero from './components/Hero';
 import VideoIntro from './components/VideoIntro';
 import CardShowcase from './components/CardShowcase';
+import AwardSection from './components/AwardSection';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -53,6 +54,7 @@ function App() {
         <Navbar />
         <Hero />
         <CardShowcase />
+        <AwardSection />
       </div>
     </>
   );
