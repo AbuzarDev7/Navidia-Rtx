@@ -93,11 +93,11 @@ const CardShowcase = () => {
         ease: 'power4.inOut',
       });
       
-      // Optional: fade out other elements when final card expands
+     
       tl.to([leftPanel, ...cards], {
         opacity: 0,
         duration: 0.5,
-      }, "<"); // Run at start of previous animation
+      }, "<");
 
     }, containerRef);
 

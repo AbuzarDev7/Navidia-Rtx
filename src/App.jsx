@@ -8,7 +8,8 @@ import CardShowcase from './components/CardShowcase';
 import AwardSection from './components/AwardSection';
 import FounderSection from './components/FounderSection';
 import WorldSection from './components/WorldSection';
-import InfiniteScrollSection from './components/InfiniteScrollSection';
+import VideoWebGLSection from './components/VideoWebGLSection';
+import Footer from './components/Footer';
 
 
 function App() {
@@ -79,8 +80,9 @@ function App() {
         <CardShowcase />
         <AwardSection />
         <FounderSection />
-        <InfiniteScrollSection />
+        <VideoWebGLSection />
         <WorldSection />
+        <Footer />
       </div>
     </>
   );

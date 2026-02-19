@@ -7,13 +7,11 @@ import { TextureLoader } from 'three';
 const Globe = () => {
   const globeRef = useRef();
   
-  // Load Earth Textures
   const [colorMap, cloudsMap] = useLoader(TextureLoader, [
-    // Standard 1k/2k textures - more reliable loading
     'https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_atmos_2048.jpg',
     'https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_clouds_1024.png'
   ]);
-  // Generate random connection points on sphere surface
+  
   const connections = useMemo(() => {
     const lines = [];
     const count = 30; // Reduced count for cleaner look with texture
