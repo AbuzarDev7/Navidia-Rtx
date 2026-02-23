@@ -1,13 +1,14 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const navLinks = [
-    { name: "Home", href: "#" },
-    { name: "About", href: "#" },
-    { name: "Live", href: "#" },
-    { name: "Contact Us", href: "#" },
+    { name: "Home", href: "/" },
+    { name: "About", href: "/about" },
+    { name: "Live", href: "/live" },
+    { name: "Contact Us", href: "/contact" },
   ];
 
   return (
@@ -17,19 +18,18 @@ const Navbar = () => {
     pt-4 sm:pt-6 
     pointer-events-none">
 
-      {/* LEFT SECTION - Desktop Links */}
       <nav className="pointer-events-auto hidden md:flex items-center space-x-6 lg:space-x-8">
         {navLinks.map((item) => (
-          <a
+          <Link
             key={item.name}
-            href={item.href}
+            to={item.href}
             className="text-gray-400 hover:text-[#76b900] 
             font-medium text-xs sm:text-sm 
             uppercase tracking-widest 
             transition-colors duration-300"
           >
             {item.name}
-          </a>
+          </Link>
         ))}
       </nav>
 
@@ -97,14 +97,14 @@ const Navbar = () => {
 
           <div className="flex flex-col space-y-6 sm:space-y-8 text-center">
             {navLinks.map((item) => (
-              <a
+              <Link
                 key={item.name}
-                href={item.href}
+                to={item.href}
                 className="text-xl sm:text-2xl font-bold text-gray-300 hover:text-[#76b900] uppercase tracking-widest transition-colors"
                 onClick={() => setIsOpen(false)}
               >
                 {item.name}
-              </a>
+              </Link>
             ))}
           </div>
         </div>

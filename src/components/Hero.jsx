@@ -27,7 +27,7 @@ function Model({ scale }) {
   );
 }
 
-const Hero = ({ onIntroComplete }) => {
+const Hero = ({ onIntroComplete, introFinished }) => {
   const textRef = useRef(null);
   const btnRef = useRef(null);
 
@@ -228,7 +228,7 @@ const Hero = ({ onIntroComplete }) => {
         }
       `}</style>
 
-      <VideoIntro onComplete={onIntroComplete} />
+      <VideoIntro onComplete={onIntroComplete} hasPlayed={introFinished} />
     </div>
   );
 };

@@ -14,9 +14,9 @@ const preventDefaultForScrollKeys = (e) => {
   }
 };
 
-const VideoIntro = ({ onComplete }) => {
+const VideoIntro = ({ onComplete, hasPlayed = false }) => {
   const [isVisible, setIsVisible] = useState(true);
-  const [hideOverlay, setHideOverlay] = useState(false);
+  const [hideOverlay, setHideOverlay] = useState(hasPlayed);
   const videoContainerRef = useRef(null);
 
   // Define unlockScroll in scope so it can be used anywhere
@@ -43,6 +43,33 @@ const VideoIntro = ({ onComplete }) => {
       // Prevent keyboard scroll
       window.addEventListener('keydown', preventDefaultForScrollKeys, { passive: false });
     };
+
+    if (hasPlayed) {
+      // Immediately set to card state without animation
+      const finalWidth = 224;
+      const finalHeight = 144;
+      const finalTop = 96;
+      const finalRight = 40;
+      const targetLeft = window.innerWidth - finalWidth - finalRight;
+      const targetClipPath = 'polygon(10% 0%, 100% 0%, 100% 90%, 90% 100%, 0% 100%, 0% 10%)';
+
+      gsap.set(videoContainerRef.current, {
+        width: finalWidth,
+        height: finalHeight,
+        top: finalTop,
+        left: targetLeft,
+        clipPath: targetClipPath,
+        position: 'absolute',
+        zIndex: '10',
+        borderWidth: '1px',
+        borderColor: 'rgba(118,185,0,0.3)',
+        borderRadius: '0px',
+        backgroundColor: '#0a0a0a',
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+      });
+      if (onComplete) onComplete();
+      return;
+    }
 
     lockScroll();
 
