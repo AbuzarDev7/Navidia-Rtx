@@ -6,6 +6,7 @@ import Curser from './components/Curser';
 import Hero from './components/Hero';
 import CardShowcase from './components/CardShowcase';
 import AwardSection from './components/AwardSection';
+import MobileAwardSection from './components/MobileAwardSection';
 import FounderSection from './components/FounderSection';
 import WorldSection from './components/WorldSection';
 import VideoWebGLSection from './components/VideoWebGLSection';
@@ -78,7 +79,12 @@ function App() {
         <Navbar />
         <Hero onIntroComplete={handleIntroComplete} />
         <CardShowcase />
-        <AwardSection />
+        <div className="hidden md:block">
+          <AwardSection />
+        </div>
+        <div className="block md:hidden">
+          <MobileAwardSection />
+        </div>
         <FounderSection />
         <VideoWebGLSection />
         <WorldSection />
