@@ -1,11 +1,13 @@
 import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import liveVideo from '../assets/videos/Live.mp4';
 
 gsap.registerPlugin(ScrollTrigger);
 
 function Live() {
   const containerRef = useRef(null);
+  const videoRef = useRef(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -67,6 +69,18 @@ function Live() {
     return () => ctx.revert();
   }, []);
 
+  const handleMouseEnter = () => {
+    if (videoRef.current) {
+      videoRef.current.play().catch(err => console.log("Video play failed:", err));
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (videoRef.current) {
+      videoRef.current.pause();
+    }
+  };
+
   return (
     <div ref={containerRef} className="relative min-h-screen bg-black text-white selection:bg-[#76b900] selection:text-black">
       
@@ -86,37 +100,44 @@ function Live() {
           <div className="live-stagger">
             <h3 className="text-[#76b900] font-black tracking-[0.8em] uppercase text-[10px] sm:text-xs mb-6 flex items-center gap-4">
               <span className="w-8 h-[1px] bg-[#76b900]/40"></span>
-              REAL-TIME TRANSMISSION
+              RTX 5090 GLOBAL PREMIERE
             </h3>
             <h1 className="text-[12vw] sm:text-[9vw] lg:text-[7.5vw] font-black leading-[0.8] uppercase tracking-tighter italic">
-              BROADCAST <br />
-              <span className="text-[#76b900] transition-all hover:text-white duration-1000">LIVE.</span>
+              UNLEASH THE <br />
+              <span className="text-[#76b900] transition-all hover:text-white duration-1000">BEAST.</span>
             </h1>
           </div>
           
           <div className="live-stagger premium-card px-10 py-8 flex items-center space-x-8 rounded-[30px] shadow-2xl overflow-hidden group relative bg-white/[0.03] border border-white/10 backdrop-blur-2xl">
              <div className="absolute top-0 right-0 w-24 h-24 bg-[#76b900]/5 blur-3xl group-hover:bg-[#76b900]/10 transition-all duration-1000"></div>
              <div className="text-right flex flex-col items-end">
-                <p className="text-[9px] text-white/30 font-black uppercase tracking-[0.3em] mb-2">Total Viewers</p>
+                <p className="text-[9px] text-white/30 font-black uppercase tracking-[0.3em] mb-2">Concurrent Viewers</p>
                 <div className="flex items-center gap-3">
                   <span className="w-2 h-2 bg-[#76b900] rounded-full animate-pulse shadow-[0_0_10px_#76b900]"></span>
-                  <p className="text-3xl font-black italic tracking-tight">142.9K</p>
+                  <p className="text-3xl font-black italic tracking-tight">2.4M</p>
                 </div>
              </div>
              <div className="w-[1px] h-12 bg-white/10"></div>
              <div className="text-right">
-                <p className="text-[9px] text-white/30 font-black uppercase tracking-[0.3em] mb-2">Network Node</p>
-                <p className="text-3xl font-black italic tracking-tight">V3_SF01</p>
+                <p className="text-[9px] text-white/30 font-black uppercase tracking-[0.3em] mb-2">Stream Priority</p>
+                <p className="text-3xl font-black italic tracking-tight">ULTRA_X</p>
              </div>
           </div>
         </header>
 
-        <div className="main-player relative group rounded-[50px] overflow-hidden border border-white/10 aspect-video shadow-2xl bg-black">
+        <div 
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          className="main-player relative group rounded-[50px] overflow-hidden border border-white/10 aspect-video shadow-2xl bg-black cursor-pointer"
+        >
           <div className="absolute inset-0 z-0">
-            <img 
-               src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=2070" 
-               alt="Main Stream"
-               className="w-full h-full object-cover opacity-30 group-hover:opacity-50 transition-all duration-1000 group-hover:scale-105"
+            <video 
+               ref={videoRef}
+               src={liveVideo}
+               muted
+               loop
+               playsInline
+               className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-all duration-1000 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40"></div>
           </div>
@@ -125,24 +146,24 @@ function Live() {
             <div className="flex justify-between items-start">
                <div className="bg-red-600/90 text-white text-[10px] font-black px-4 py-1.5 uppercase tracking-[0.4em] flex items-center gap-3 shadow-[0_0_30px_rgba(220,38,38,0.5)]">
                  <span className="w-1.5 h-1.5 bg-white rounded-full animate-ping"></span>
-                 LIVE
+                 EXCLUSIVE PREMIERE
                </div>
                <div className="bg-white/[0.03] backdrop-blur-xl px-6 py-2 border border-white/10 flex items-center space-x-3 shadow-xl">
-                 <span className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse"></span>
-                 <span className="text-xs font-black font-mono tracking-widest italic opacity-80">UTC_00:42:15</span>
+                 <span className="w-1.5 h-1.5 bg-[#76b900] rounded-full animate-pulse"></span>
+                 <span className="text-xs font-black font-mono tracking-widest italic opacity-80">RTX_5090_LIVE</span>
                </div>
             </div>
             
             <div className="flex justify-center">
-               <button className="pointer-events-auto w-24 h-24 sm:w-32 sm:h-32 rounded-full border border-white/20 bg-white/5 backdrop-blur-md flex items-center justify-center group/play hover:bg-[#76b900] hover:border-[#76b900] transition-all duration-700 hover:shadow-[0_0_60px_rgba(118,185,0,0.4)]">
-                  <div className="w-0 h-0 border-t-[15px] border-t-transparent border-l-[25px] border-l-white border-b-[15px] border-b-transparent ml-2 group-hover/play:border-l-black transition-all duration-500"></div>
-               </button>
+               <div className="pointer-events-none w-24 h-24 sm:w-32 sm:h-32 rounded-full border border-white/20 bg-white/5 backdrop-blur-md flex items-center justify-center group-hover:bg-[#76b900] group-hover:border-[#76b900] transition-all duration-700 group-hover:shadow-[0_0_60px_rgba(118,185,0,0.4)] opacity-80 group-hover:opacity-0">
+                  <div className="w-0 h-0 border-t-[15px] border-t-transparent border-l-[25px] border-l-white border-b-[15px] border-b-transparent ml-2 transition-all duration-500"></div>
+               </div>
             </div> 
  
             <div className="flex flex-col sm:flex-row justify-between items-end sm:items-center gap-6">
                <div className="bg-white/[0.02] backdrop-blur-2xl p-6 border-l-4 border-[#76b900] w-full sm:w-auto shadow-2xl">
-                 <p className="text-[#76b900] text-[9px] font-black tracking-[0.5em] uppercase mb-2">NEURAL_DECODER_ACTIVE</p>
-                 <h3 className="text-xl sm:text-2xl font-black italic tracking-tighter uppercase whitespace-normal break-words max-w-lg">CYBERNETIC_FRONTIER_DEMO_v2.0</h3>
+                 <p className="text-[#76b900] text-[9px] font-black tracking-[0.5em] uppercase mb-2">NEURAL_DECODER_READY</p>
+                 <h3 className="text-xl sm:text-2xl font-black italic tracking-tighter uppercase whitespace-normal break-words max-w-lg">RTX_5090_REVELATION_ARCHIVE</h3>
                </div>
                <div className="flex items-center space-x-3 pointer-events-auto opacity-30 group-hover:opacity-100 transition-opacity duration-700">
                   <div className="w-12 h-1.5 bg-[#76b900]/20 rounded-full overflow-hidden">
@@ -158,15 +179,15 @@ function Live() {
 
         <section className="mt-32">
            <header className="archive-header flex items-center gap-6 mb-12">
-              <h2 className="text-xs font-black uppercase tracking-[0.5em] text-white/30 truncate">THE_ARCHIVE_STORAGE</h2>
+              <h2 className="text-xs font-black uppercase tracking-[0.5em] text-white/30 truncate">RTX_50_SERIES_ARCHIVE</h2>
               <div className="flex-1 h-[1px] bg-white/5"></div>
            </header>
            
            <div className="archive-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
               {[
-                "DEEP_LEARNING_RECONSTRUCTION_LAB_SESSION_ULTRA_PRESET",
-                "REALTIME_RAY_TRACING_STRESS_TEST_V4_STABLE",
-                "NEURAL_GRAPHICS_OVERVIEW_ARCHIVE_TRANSMISSION_01"
+                "RTX_5090_DLSS_4_PERFORMANCE_BREAKDOWN",
+                "ULTRA_RAY_TRACING_IN_NEXT_GEN_TITLES",
+                "NEURAL_GRAPHICS_V3_ARCHITECTURE_DEEP_DIVE"
               ].map((title, i) => (
                 <div key={i} className="archive-card group cursor-pointer bg-white/[0.03] border border-white/10 backdrop-blur-2xl rounded-[40px] overflow-hidden hover:translate-y-[-10px] shadow-2xl transition-all duration-500">
                   <div className="relative aspect-video overflow-hidden">
@@ -176,7 +197,7 @@ function Live() {
                       className="w-full h-full object-cover group-hover:scale-110 transition-all duration-1000 opacity-60 group-hover:opacity-100"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
-                    <div className="absolute bottom-4 right-4 bg-white/5 backdrop-blur-md px-3 py-1 text-[10px] font-black font-mono text-[#76b900] border border-[#76b900]/30 shadow-[0_0_20px_rgba(118,185,0,0.2)]">8K_60FPS</div>
+                    <div className="absolute bottom-4 right-4 bg-white/5 backdrop-blur-md px-3 py-1 text-[10px] font-black font-mono text-[#76b900] border border-[#76b900]/30 shadow-[0_0_20px_rgba(118,185,0,0.2)]">12K_120FPS</div>
                   </div>
                   <div className="p-8 relative">
                     <div className="absolute top-0 right-10 w-20 h-20 bg-[#76b900]/5 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
@@ -184,7 +205,7 @@ function Live() {
                       {title}
                     </h4>
                     <div className="flex justify-between items-center">
-                      <p className="text-[9px] text-white/20 font-black uppercase tracking-[0.4em]">RECORDED 12.02.26</p>
+                      <p className="text-[9px] text-white/20 font-black uppercase tracking-[0.4em]">ARCHIVED 23.02.26</p>
                       <div className="w-8 h-[2px] bg-white/5 group-hover:w-16 group-hover:bg-[#76b900]/50 transition-all duration-700"></div>
                     </div>
                   </div>
